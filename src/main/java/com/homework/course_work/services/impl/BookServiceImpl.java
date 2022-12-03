@@ -6,6 +6,8 @@ import com.homework.course_work.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -32,6 +34,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book findBookById(int id) {
-        return null;
+        return bookRepository.findByBookCode(id);
+    }
+
+    @Override
+    public List<Book> findAllBook() {
+        return bookRepository.findAll();
     }
 }
