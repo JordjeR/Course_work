@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "loan_of_book")
-public class LoanOfBooks {
+@Table(name = "delivery")
+public class Delivery {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +25,10 @@ public class LoanOfBooks {
     @JoinColumn(name = "reader_id", foreignKey = @ForeignKey(name = "FK_READER_ID"))
     private Reader reader;
 
-    public LoanOfBooks() {
+    public Delivery() {
     }
 
-    public LoanOfBooks(Integer bookCode, Integer libraryCardNumber, LocalDate dateOfIssue, LocalDate returnDate) {
+    public Delivery(Integer bookCode, Integer libraryCardNumber, LocalDate dateOfIssue, LocalDate returnDate) {
         this.bookCode = bookCode;
         this.libraryCardNumber = libraryCardNumber;
         this.dateOfIssue = dateOfIssue;

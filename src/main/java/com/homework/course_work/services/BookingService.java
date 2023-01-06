@@ -6,9 +6,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface BookingService {
-    void bookingForReader(String readerFio, LocalDate dateBooking, Integer bookCode);
+    void booking(String bookCode, String libraryCardNumber, LocalDate date);
 
-    void unbookingForReader(Integer bookCode);
+    void unbooking(Integer bookCode);
 
     List<Booking> findAllBooking();
 }

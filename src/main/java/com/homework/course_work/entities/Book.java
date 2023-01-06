@@ -24,13 +24,13 @@ public class Book {
 
 //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    @JoinColumn(name = "book_id", referencedColumnName = "bookCode")
-    @OneToMany
+    @OneToMany(mappedBy = "book")
     private List<Booking> booking;
 
 //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    @JoinColumn(name = "book_id", referencedColumnName = "bookCode")
-    @OneToMany
-    private List<LoanOfBooks> loanOfBooks;
+    @OneToMany(mappedBy = "book")
+    private List<Delivery> deliveries;
 
     public Book() {
     }
@@ -95,7 +95,7 @@ public class Book {
     }
 
     public void setNumberOfCopies(Integer numberOfCopies) {
-        if (numberOfCopies <= 0) {
+        if (numberOfCopies < 0) {
             throw new IllegalArgumentException("Указано отрицательное количество экземпляров книг!");
         }
 
@@ -146,16 +146,16 @@ public class Book {
         this.booking = booking;
     }
 
-    public List<LoanOfBooks> getLoanOfBooks() {
-        return loanOfBooks;
+    public List<Delivery> getDeliveries() {
+        return deliveries;
     }
 
-    public void setLoanOfBooks(List<LoanOfBooks> loanOfBooks) {
-        if (loanOfBooks == null) {
+    public void setDeliveries(List<Delivery> deliveries) {
+        if (deliveries == null) {
             throw new IllegalArgumentException("Некорректно указана выдача книг");
         }
 
-        this.loanOfBooks = loanOfBooks;
+        this.deliveries = deliveries;
     }
 }
 

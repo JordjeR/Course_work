@@ -1,7 +1,6 @@
 package com.homework.course_work.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class Reader {
     private List<Booking> booking;
 
     @OneToMany(mappedBy = "reader")
-    private List<LoanOfBooks> loanOfBooks;
+    private List<Delivery> deliveries;
 
     public Reader() {
     }
@@ -72,11 +71,11 @@ public class Reader {
         this.booking = booking;
     }
 
-    public List<LoanOfBooks> getLoanOfBooks() {
-        return loanOfBooks;
+    public List<Delivery> getDeliveries() {
+        return deliveries;
     }
 
-    public void setLoanOfBooks(List<LoanOfBooks> loanOfBooks) {
-        this.loanOfBooks = loanOfBooks;
+    public void setDeliveries(List<Delivery> deliveries) {
+        this.deliveries = deliveries;
     }
 }

@@ -7,5 +7,7 @@ import java.util.List;
 public interface ReaderService {
     Reader findReaderByFio(String fio);
 
+    Reader findReaderByLibraryCardNumber(String libraryCardNumber);
+
     List<Reader> findAllReader();
 }

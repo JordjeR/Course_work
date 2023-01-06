@@ -1,8 +1,12 @@
 package com.homework.course_work.controllers;
 
 import com.homework.course_work.entities.Book;
+import com.homework.course_work.entities.Booking;
+import com.homework.course_work.entities.Delivery;
 import com.homework.course_work.entities.Reader;
+import com.homework.course_work.repo.DeliveryRepository;
 import com.homework.course_work.services.BookService;
+import com.homework.course_work.services.BookingService;
 import com.homework.course_work.services.ReaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,21 +28,27 @@ import java.util.List;
 @Controller
 public class BookController {
 
-    private final BookService bookService;
-
-    private final ReaderService readerService;
-
-    @Autowired
-    public BookController(BookService bookService, ReaderService readerService) {
-        this.bookService = bookService;
-        this.readerService = readerService;
-    }
-
     @Value("${upload.path}")
     private String pathToFile;
 
+    private final BookService bookService;
+    private final ReaderService readerService;
+    private final BookingService bookingService;
+    private final DeliveryRepository deliveryRepository;
+
+    @Autowired
+    public BookController(BookService bookService,
+                          ReaderService readerService,
+                          BookingService bookingService,
+                          DeliveryRepository deliveryRepository) {
+        this.bookService = bookService;
+        this.readerService = readerService;
+        this.bookingService = bookingService;
+        this.deliveryRepository = deliveryRepository;
+    }
+
     @GetMapping("/library")
-    public String allBooks(Model model) {
+    public String library(Model model) {
         List<Book> books = bookService.findAllBook();
 
         List<Reader> readers = readerService.findAllReader();
@@ -49,13 +59,23 @@ public class BookController {
         return "library";
     }
 
-    @GetMapping("/book-info/{id}")
-    public String bookInfoById(@PathVariable String id, Model model) {
-        Book book = bookService.findBookById(Integer.parseInt(id));
+    @GetMapping("/book-info/{bookCode}")
+    public String bookInfoByBookCode(@PathVariable String bookCode,
+                                     Model model) {
+        Book book = bookService.findBookByBookCode(bookCode);
         List<Reader> readers = readerService.findAllReader();
+        List<Booking> bookings = bookingService.findAllBooking();
+        List<Delivery> deliveries = deliveryRepository.findAll();
+
+        List<String> bookingReaders = book.getBooking().stream()
+                .map(booking -> booking.getReader().getFio())
+                .toList();
 
         model.addAttribute("book", book);
         model.addAttribute("readers", readers);
+        model.addAttribute("bookings", bookings);
+        model.addAttribute("deliveries", deliveries);
+        model.addAttribute("bookingReaders", bookingReaders);
 
         return "book-info";
     }
@@ -75,8 +95,7 @@ public class BookController {
             @RequestParam Double price,
             @RequestParam Integer volume,
             @RequestParam MultipartFile file,
-            Model model
-    ) throws IOException {
+            Model model) throws IOException {
 
         Book book = new Book();
 

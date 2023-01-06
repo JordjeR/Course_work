@@ -24,6 +24,12 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
     @Override
+    public Reader findReaderByLibraryCardNumber(String libraryCardNumber) {
+        return readerRepository.findById(Integer.parseInt(libraryCardNumber))
+                .orElse(null);
+    }
+
+    @Override
     public List<Reader> findAllReader() {
         return readerRepository.findAll();
     }

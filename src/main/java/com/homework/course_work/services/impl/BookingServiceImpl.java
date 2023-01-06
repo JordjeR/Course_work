@@ -23,21 +23,19 @@ public class BookingServiceImpl implements BookingService {
     private final BookService bookService;
 
     @Autowired
-    public BookingServiceImpl(BookingRepository bookingRepository, ReaderService readerService, BookService bookService) {
+    public BookingServiceImpl(BookingRepository bookingRepository,
+                              ReaderService readerService,
+                              BookService bookService
+    ) {
         this.bookingRepository = bookingRepository;
         this.readerService = readerService;
         this.bookService = bookService;
     }
 
     @Override
-    public void bookingForReader(String readerFio, LocalDate dateBooking, Integer bookCode) {
-        if (dateBooking.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Дата бронирования указано раньше текущей даты.");
-        }
-
-        Reader reader = readerService.findReaderByFio(readerFio);
-
-        Book book = bookService.findBookById(bookCode);
+    public void booking(String bookCode, String libraryCardNumber, LocalDate date) {
+        Reader reader = readerService.findReaderByLibraryCardNumber(libraryCardNumber);
+        Book book = bookService.findBookByBookCode(bookCode);
 
         Booking booking = new Booking();
 
@@ -46,21 +44,21 @@ public class BookingServiceImpl implements BookingService {
         booking.setBook(book);
         booking.setBookCode(book.getBookCode());
         booking.setReader(reader);
-        booking.setOrderDate(dateBooking);
+        booking.setOrderDate(date);
         booking.setLibraryCardNumber(reader.getLibraryCardNumber());
 
         bookingRepository.save(booking);
     }
 
     @Override
-    public void unbookingForReader(Integer bookCode) {
-        Book book = bookService.findBookById(bookCode);
-
-        Booking booking = bookingRepository.findByBookCode(book.getBookCode());
-
-        book.setNumberOfCopies(book.getNumberOfCopies() + 1);
-
-        bookingRepository.delete(booking);
+    public void unbooking(Integer bookCode) {
+//        Book book = bookService.findBookByBookCode(bookCode);
+//
+//        Booking booking = bookingRepository.findByBookCode(book.getBookCode());
+//
+//        book.setNumberOfCopies(book.getNumberOfCopies() + 1);
+//
+//        bookingRepository.delete(booking);
     }
 
     @Override

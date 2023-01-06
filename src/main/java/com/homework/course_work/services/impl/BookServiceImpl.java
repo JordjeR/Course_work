@@ -33,8 +33,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book findBookById(int id) {
-        return bookRepository.findByBookCode(id);
+    public Book findBookByBookCode(String bookCode) {
+        return bookRepository.findByBookCode(Integer.parseInt(bookCode));
     }
 
     @Override

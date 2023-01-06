@@ -9,7 +9,7 @@ public interface BookService {
 
     void delete(int id);
 
-    Book findBookById(int id);
+    Book findBookByBookCode(String bookCode);
 
     List<Book> findAllBook();
 }
