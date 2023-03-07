@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReaderRepository extends JpaRepository<Reader, Integer> {
-    Reader findByFio(String fio);
 }

@@ -1,9 +1,13 @@
 package com.homework.course_work.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+@NoArgsConstructor
+@Data
 @Entity
 @Table(name = "delivery")
 public class Delivery {
@@ -11,83 +15,21 @@ public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer issueCode;
-
     private Integer bookCode;
     private Integer libraryCardNumber;
     private LocalDate dateOfIssue;
-    private LocalDate returnDate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "book_id", foreignKey = @ForeignKey(name = "FK_BOOK_ID"))
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.REFRESH
+    )
+    @JoinColumn(name = "book_id")
     private Book book;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "reader_id", foreignKey = @ForeignKey(name = "FK_READER_ID"))
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.REFRESH
+    )
+    @JoinColumn(name = "reader_id")
     private Reader reader;
-
-    public Delivery() {
-    }
-
-    public Delivery(Integer bookCode, Integer libraryCardNumber, LocalDate dateOfIssue, LocalDate returnDate) {
-        this.bookCode = bookCode;
-        this.libraryCardNumber = libraryCardNumber;
-        this.dateOfIssue = dateOfIssue;
-        this.returnDate = returnDate;
-    }
-
-    public Integer getIssueCode() {
-        return issueCode;
-    }
-
-    public void setIssueCode(Integer issueCode) {
-        this.issueCode = issueCode;
-    }
-
-    public Integer getBookCode() {
-        return bookCode;
-    }
-
-    public void setBookCode(Integer bookCode) {
-        this.bookCode = bookCode;
-    }
-
-    public Integer getLibraryCardNumber() {
-        return libraryCardNumber;
-    }
-
-    public void setLibraryCardNumber(Integer libraryCardNumber) {
-        this.libraryCardNumber = libraryCardNumber;
-    }
-
-    public LocalDate getDateOfIssue() {
-        return dateOfIssue;
-    }
-
-    public void setDateOfIssue(LocalDate dateOfIssue) {
-        this.dateOfIssue = dateOfIssue;
-    }
-
-    public LocalDate getReturnDate() {
-        return returnDate;
-    }
-
-    public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
-    }
-
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
-    }
-
-    public Reader getReader() {
-        return reader;
-    }
-
-    public void setReader(Reader reader) {
-        this.reader = reader;
-    }
 }

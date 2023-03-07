@@ -1,9 +1,13 @@
 package com.homework.course_work.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor
+@Data
 @Entity
 @Table(name = "reader")
 public class Reader {
@@ -11,71 +15,23 @@ public class Reader {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer libraryCardNumber;
-
     private String fio;
     private String address;
     private Integer phoneNumber;
 
-    @OneToMany(mappedBy = "reader")
+    @OneToMany(
+            mappedBy = "reader",
+            orphanRemoval = true,
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.REFRESH
+    )
     private List<Booking> booking;
 
-    @OneToMany(mappedBy = "reader")
+    @OneToMany(
+            mappedBy = "reader",
+            orphanRemoval = true,
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.REFRESH
+    )
     private List<Delivery> deliveries;
-
-    public Reader() {
-    }
-
-    public Reader(String fio, String address, Integer phoneNumber) {
-        this.fio = fio;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-    }
-
-    public Integer getLibraryCardNumber() {
-        return libraryCardNumber;
-    }
-
-    public void setLibraryCardNumber(Integer libraryCardNumber) {
-        this.libraryCardNumber = libraryCardNumber;
-    }
-
-    public String getFio() {
-        return fio;
-    }
-
-    public void setFio(String fio) {
-        this.fio = fio;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Integer getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(Integer phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public List<Booking> getBooking() {
-        return booking;
-    }
-
-    public void setBooking(List<Booking> booking) {
-        this.booking = booking;
-    }
-
-    public List<Delivery> getDeliveries() {
-        return deliveries;
-    }
-
-    public void setDeliveries(List<Delivery> deliveries) {
-        this.deliveries = deliveries;
-    }
 }

@@ -2,7 +2,7 @@ package com.homework.course_work.controllers;
 
 import com.homework.course_work.entities.Reader;
 import com.homework.course_work.repo.ReaderRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,22 +12,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class ReaderController {
 
     private final ReaderRepository readerRepository;
 
-    @Autowired
-    public ReaderController(ReaderRepository readerRepository) {
-        this.readerRepository = readerRepository;
-    }
-
     @GetMapping("/readers")
     public String readers(Model model) {
-
         List<Reader> readers = readerRepository.findAll();
 
         model.addAttribute("readers", readers);
-
         return "readers-page";
     }
 
@@ -41,9 +35,12 @@ public class ReaderController {
             @RequestParam String fio,
             @RequestParam String address,
             @RequestParam Integer phoneNumber) {
+        Reader reader = new Reader();
+        reader.setFio(fio);
+        reader.setAddress(address);
+        reader.setPhoneNumber(phoneNumber);
 
-        readerRepository.save(new Reader(fio, address, phoneNumber));
-
+        readerRepository.save(reader);
         return "redirect:/readers";
     }
 }

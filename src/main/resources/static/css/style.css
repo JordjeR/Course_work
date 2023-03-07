@@ -8,6 +8,17 @@ input[type=date]::-webkit-calendar-picker-indicator {
 input[type=date] {
     color: #757575;
 }
+DIV.table {
+    display: table;
+}
+
+FORM.tr, DIV.tr {
+    display: table-row;
+}
+
+SPAN.td {
+    display: table-cell;
+}
 ::-webkit-input-placeholder {color:#757575;}
 ::-webkit-file-upload-button{
     width: 500px;

@@ -7,40 +7,29 @@ import com.homework.course_work.repo.BookingRepository;
 import com.homework.course_work.services.BookService;
 import com.homework.course_work.services.BookingService;
 import com.homework.course_work.services.ReaderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
-
     private final ReaderService readerService;
-
     private final BookService bookService;
 
-    @Autowired
-    public BookingServiceImpl(BookingRepository bookingRepository,
-                              ReaderService readerService,
-                              BookService bookService
-    ) {
-        this.bookingRepository = bookingRepository;
-        this.readerService = readerService;
-        this.bookService = bookService;
-    }
-
     @Override
+    @Transactional
     public void booking(String bookCode, String libraryCardNumber, LocalDate date) {
         Reader reader = readerService.findReaderByLibraryCardNumber(libraryCardNumber);
         Book book = bookService.findBookByBookCode(bookCode);
 
-        Booking booking = new Booking();
-
         book.setNumberOfCopies(book.getNumberOfCopies() - 1);
 
+        Booking booking = new Booking();
         booking.setBook(book);
         booking.setBookCode(book.getBookCode());
         booking.setReader(reader);
@@ -51,18 +40,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void unbooking(Integer bookCode) {
-//        Book book = bookService.findBookByBookCode(bookCode);
-//
-//        Booking booking = bookingRepository.findByBookCode(book.getBookCode());
-//
-//        book.setNumberOfCopies(book.getNumberOfCopies() + 1);
-//
-//        bookingRepository.delete(booking);
-    }
+    @Transactional
+    public void unbooking(String bookCode, String libraryCardNumber, LocalDate date) {
+        Book book = bookService.findBookByBookCode(bookCode);
+        Reader reader = readerService.findReaderByLibraryCardNumber(libraryCardNumber);
 
-    @Override
-    public List<Booking> findAllBooking() {
-        return bookingRepository.findAll();
+        Booking booking = book.getBooking().stream()
+                .filter(b -> b.getReader().getFio().equals(reader.getFio()))
+                .filter(b -> b.getOrderDate().isEqual(date))
+                .findFirst()
+                .get();
+
+        bookingRepository.delete(booking);
+
+        book.setNumberOfCopies(book.getNumberOfCopies() + 1);
+        bookService.save(book);
     }
 }
