@@ -7,28 +7,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
-
 @Controller
 @RequiredArgsConstructor
 public class DeliveryController {
 
     private final DeliveryService deliveryService;
 
-    @PostMapping("/delivery/{bookCode}/{reader}/{orderDate}")
+    @PostMapping("/delivery/{bookCode}/{reader}/{bookingСode}")
     public String deliveryFromTable(@PathVariable String bookCode,
                                     @PathVariable String reader,
-                                    @PathVariable LocalDate orderDate) {
-        deliveryService.delivery(bookCode, reader, orderDate, false);
+                                    @PathVariable String bookingСode) {
+        deliveryService.delivery(bookCode, reader, bookingСode, false);
 
         return "redirect:/book-info/{bookCode}";
     }
 
     @PostMapping("/delivery/{bookCode}")
     public String deliveryFromButton(@PathVariable String bookCode,
-                                     @RequestParam String libraryCardNumber,
-                                     @RequestParam LocalDate date) {
-        deliveryService.delivery(bookCode, libraryCardNumber, date, true);
+                                     @RequestParam String libraryCardNumber) {
+        deliveryService.delivery(bookCode, libraryCardNumber, "", true);
 
         return "redirect:/book-info/{bookCode}";
     }

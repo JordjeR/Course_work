@@ -24,11 +24,10 @@ public class BookingController {
         return "redirect:/book-info/{bookCode}";
     }
 
-    @PostMapping("/unbooking/{bookCode}/{reader}/{orderDate}")
+    @PostMapping("/unbooking/{bookCode}/{bookingСode}")
     public String unbookingFromTable(@PathVariable String bookCode,
-                                     @PathVariable String reader,
-                                     @PathVariable LocalDate orderDate) {
-        bookingService.unbooking(bookCode, reader, orderDate);
+                                     @PathVariable String bookingСode) {
+        bookingService.unbooking(bookCode, bookingСode);
 
         return "redirect:/book-info/{bookCode}";
     }

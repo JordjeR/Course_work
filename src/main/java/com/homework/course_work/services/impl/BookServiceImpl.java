@@ -19,11 +19,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public void save(Book book) {
-        if (book != null) {
-            bookRepository.save(book);
-        } else {
-            throw new IllegalArgumentException("Указан некорректный аргумент");
-        }
+        bookRepository.save(book);
     }
 
     @Override

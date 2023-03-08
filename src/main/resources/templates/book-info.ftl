@@ -41,7 +41,6 @@
                 <span class="td">
                     Дата выдачи
                 </span>
-
                 <#list deliveries as delivery>
                     <div class="tr">
                         <span class="td">
@@ -88,7 +87,7 @@
                         </span>
                         <span class="td">
                             <button formmethod="post"
-                                    formaction="/unbooking/${book.bookCode}/${booking.reader.libraryCardNumber}/${booking.orderDate}"
+                                    formaction="/unbooking/${book.bookCode}/${booking.bookingСode}"
                                     form="booking-form"
                             >
                                 Разбронировать
@@ -96,7 +95,7 @@
                         </span>
                         <span class="td">
                             <button formmethod="post"
-                                    formaction="/delivery/${book.bookCode}/${booking.reader.libraryCardNumber}/${booking.orderDate}"
+                                    formaction="/delivery/${book.bookCode}/${booking.reader.libraryCardNumber}/${booking.bookingСode}"
                                     form="booking-form"
                             >
                                 Выдать
@@ -110,12 +109,12 @@
         </#if>
     </div>
 
-    <#if readers?has_content>
+    <#if readers?has_content && book.numberOfCopies gt 0>
         <span>Выберите читателя, для кого будет проводиться бронирование или выдача</span>
 
         <select id="select" onchange="saveValueInInput(this)" required>
+            <option selected disabled>Выберите читателя</option>
             <#list readers as reader>
-                <option selected disabled>Выберите читателя</option>
                 <option value="${reader.libraryCardNumber}">${reader.fio}</option>
             </#list>
         </select>
@@ -132,7 +131,7 @@
         <form method="post" class="booking-hidden" action="/booking/${book.bookCode}">
             <input type="date" class="date-value" name="date" hidden>
             <input type="text" class="library-card-number-value" name="libraryCardNumber" hidden>
-            <button id="btn-booking" class="booking-hidden" name="booking" hidden>
+            <button id="btn-booking" class="booking-hidden" name="booking" onclick="return checkBooking()" hidden>
                 Забронировать
             </button>
         </form>
@@ -140,12 +139,12 @@
         <form method="post" class="delivery-hidden" action="/delivery/${book.bookCode}">
             <input type="date" class="date-value" name="date" hidden>
             <input type="text" class="library-card-number-value" name="libraryCardNumber" hidden>
-            <button onclick="return checkBookingTable()">
+            <button onclick="return checkDeliveryButton()">
                 Выдать
             </button>
         </form>
     <#else>
-        Читателей пока нет в библиотеке
+        Книг на бронирование или выдачу не осталось
     </#if>
     <a href="/library">Вернуться в библиотеку</a>
 </div>
@@ -162,17 +161,12 @@
     const libraryCardNumValue = document.getElementsByClassName('library-card-number-value');
 
     const message = document.getElementById('message');
-
     const dateNow = (new Date()).toISOString().slice(0, 10);
-    calendar.setAttribute('min', dateNow);
-    calendar.value = dateNow;
 
-    // TODO проверить это место
-    for (let dateVal of dateValue) {
-        dateVal.value = calendar.value;
+    if (calendar.value === "") {
+        calendar.setAttribute('min', dateNow);
+        calendar.value = dateNow;
     }
-
-    debugger
 
     function setMessage(text, seconds) {
         message.removeAttribute('hidden');
@@ -182,39 +176,47 @@
         }, seconds * 1000);
     }
 
-    function checkBookingTable() {
+    function checkBooking() {
+        const selectedValue = select.options[select.selectedIndex].text;
+        if (selectedValue === 'Выберите читателя') {
+            setMessage("Выберите читателя для бронирования книги.", 5);
+            return false;
+        }
+        for (let dateVal of dateValue) dateVal.value = calendar.value;
+    }
+
+    function checkDeliveryButton() {
         const numberOfCopies = '${book.numberOfCopies}';
         const readersArray = [<#list bookings as booking>'${booking.reader.fio}', </#list>];
         const selectedValue = select.options[select.selectedIndex].text;
         const isFoundReader = readersArray.includes(selectedValue);
+        for (let dateVal of dateValue) dateVal.value = dateNow;
 
-        if (readersArray.length === 0 && numberOfCopies !== "0") {
-            return true;
+        if (selectedValue === 'Выберите читателя') {
+            setMessage("Выберите читателя для выдачи книги.", 5);
+            return false;
         }
+        if (readersArray.length === 0 && numberOfCopies !== "0") return true;
 
         if (isFoundReader === true) {
-            setMessage("Сначала разбронируйте все забронированные книги или получите их", 5);
+            setMessage("Сначала разбронируйте все забронированные книги или получите их.", 5);
             return false;
         } else if ((isFoundReader === false && numberOfCopies === "0") || isFoundReader === false) {
             setMessage("Книга не может быть выдана читателю '" + selectedValue + "' " +
                 "по причине отсутствия экземпляров или предварительного бронирования.", 5);
             return false;
-        } else if (isFoundReader === false && numberOfCopies !== "0")
-            return true;
-
+        } else if (isFoundReader === false && numberOfCopies !== "0") return true;
         return true;
     }
 
     function saveDateInInput() {
-        for (let dateVal of dateValue) {
+        for (let dateVal of dateValue)
             dateVal.value = calendar.value;
-        }
     }
 
     function saveValueInInput(selectedValue) {
-        for (let libCardNumVal of libraryCardNumValue) {
+        for (let libCardNumVal of libraryCardNumValue)
             libCardNumVal.value = selectedValue.value;
-        }
     }
 
     function showElements() {

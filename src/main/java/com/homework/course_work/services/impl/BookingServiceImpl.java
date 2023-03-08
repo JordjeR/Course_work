@@ -26,7 +26,6 @@ public class BookingServiceImpl implements BookingService {
     public void booking(String bookCode, String libraryCardNumber, LocalDate date) {
         Reader reader = readerService.findReaderByLibraryCardNumber(libraryCardNumber);
         Book book = bookService.findBookByBookCode(bookCode);
-
         book.setNumberOfCopies(book.getNumberOfCopies() - 1);
 
         Booking booking = new Booking();
@@ -41,16 +40,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public void unbooking(String bookCode, String libraryCardNumber, LocalDate date) {
+    public void unbooking(String bookCode, String bookingCode) {
         Book book = bookService.findBookByBookCode(bookCode);
-        Reader reader = readerService.findReaderByLibraryCardNumber(libraryCardNumber);
-
-        Booking booking = book.getBooking().stream()
-                .filter(b -> b.getReader().getFio().equals(reader.getFio()))
-                .filter(b -> b.getOrderDate().isEqual(date))
-                .findFirst()
-                .get();
-
+        Booking booking = bookingRepository.findBookingByBookingСode(Integer.parseInt(bookingCode));
         bookingRepository.delete(booking);
 
         book.setNumberOfCopies(book.getNumberOfCopies() + 1);

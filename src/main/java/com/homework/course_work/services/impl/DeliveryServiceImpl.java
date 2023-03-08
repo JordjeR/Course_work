@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
-    public void delivery(String bookCode, String libraryCardNumber, LocalDate date, boolean isNotBooking) {
+    public void delivery(String bookCode, String libraryCardNumber, String bookingCode, boolean isNotBooking) {
         Reader reader = readerService.findReaderByLibraryCardNumber(libraryCardNumber);
         Book book = bookService.findBookByBookCode(bookCode);
         book.setNumberOfCopies(book.getNumberOfCopies() - 1);
@@ -36,12 +35,12 @@ public class DeliveryServiceImpl implements DeliveryService {
         delivery.setBookCode(book.getBookCode());
         delivery.setLibraryCardNumber(reader.getLibraryCardNumber());
         delivery.setReader(reader);
-        delivery.setDateOfIssue(date);
+        delivery.setDateOfIssue(LocalDate.now());
 
         deliveryRepository.save(delivery);
 
         if (!isNotBooking)
-            bookingService.unbooking(String.valueOf(book.getBookCode()), String.valueOf(reader.getLibraryCardNumber()), date);
+            bookingService.unbooking(String.valueOf(book.getBookCode()), bookingCode);
     }
 
     @Override
